@@ -15,6 +15,9 @@ router.post("/:id", async (req, res) => {
   try {
     const { id } = req.params;
     const { rows } = await db.query("SELECT * FROM st WHERE name=$1", [id]);
+    if (rows.length === 0) {
+      res.send("user not found");
+    }
     if (rows) {
       res.status(200).json(rows[0]);
     } else {
