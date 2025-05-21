@@ -11,6 +11,19 @@ router.get("/", async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 });
+router.post("/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { rows } = await db.query("SELECT * FROM st WHERE name=$1", [id]);
+    if (rows) {
+      res.status(200).json(rows[0]);
+    } else {
+      res.status(404).json(err.message);
+    }
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
 
 router.post("/post", async (req, res) => {
   const { id, name, age } = req.body;
@@ -29,6 +42,7 @@ router.post("/post", async (req, res) => {
     res.status(500).json(error.message);
   }
 });
+
 router.delete("/delete/:id", async (req, res) => {
   try {
     const { id } = req.params;
@@ -75,4 +89,5 @@ router.put("/update/:id", async (req, res) => {
     res.status(500).json(error.message);
   }
 });
+
 module.exports = router;
