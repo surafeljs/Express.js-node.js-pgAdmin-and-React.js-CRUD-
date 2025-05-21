@@ -23,7 +23,53 @@ router.post("/post", async (req, res) => {
     if (rows) {
       res.status(200).json(rows[0]);
     } else {
-      res.status(404).json("fffffff");
+      res.status(404).json(err.message);
+    }
+  } catch (error) {
+    res.status(500).json(error.message);
+  }
+});
+router.delete("/delete/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { rows, err } = await db.query(
+      "DELETE FROM st WHERE id=$1 RETURNING *",
+      [id]
+    );
+    if (rows.length === 0) {
+      res.send("user not found");
+    }
+    if (rows) {
+      res.status(200).json({
+        message: "deleted",
+        status: rows[0],
+      });
+    } else {
+      res.status(404).json(err.message);
+    }
+  } catch (error) {
+    res.status(500).json(error.message);
+  }
+});
+
+router.put("/update/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { name } = req.body;
+    const { rows, err } = await db.query(
+      "UPDATE st SET name=$1 WHERE id=$2 RETURNING *",
+      [name, id]
+    );
+    if (rows.length === 0) {
+      res.send("user not found");
+    }
+    if (rows) {
+      res.status(200).json({
+        message: "updated",
+        status: rows[0],
+      });
+    } else {
+      res.status(404).json(err.message);
     }
   } catch (error) {
     res.status(500).json(error.message);
