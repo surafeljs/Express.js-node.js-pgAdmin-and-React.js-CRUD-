@@ -1,10 +1,14 @@
 const express = require("express");
 const db = require("./database/db");
 const multer = require("multer");
-const path = require("path");
+const cors = require("cors");
+
 const router = express.Router();
 router.use(express.json());
-router.use(express.urlencoded({ extended: true }));
+router.use(express.urlencoded({ extended: false }));
+router.use(cors({ origin: "http://localhost:3000" }));
+router.use(express.static("public"));
+
 router.get("/", async (req, res) => {
   try {
     const { rows } = await db.query("SELECT * FROM st");
@@ -15,19 +19,19 @@ router.get("/", async (req, res) => {
 });
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
-    cb(null, "./uploads"); // Use relative path, not absolute
+    cb(null, "./public/uploads"); // Use relative path, not absolute
   },
   filename: function (req, file, cb) {
     cb(null, Date.now() + "-" + file.originalname);
   },
 });
-const upload = multer({ storage });
+const upload = multer({ storage: storage });
 
 router.post("/fileupload", upload.single("file"), (req, res) => {
-  res.send(req.body);
+  console.log(req.file);
 });
 
-router.post("/:id", async (req, res) => {
+router.post("post/:id", async (req, res) => {
   try {
     const { id } = req.params;
     const { rows } = await db.query("SELECT * FROM st WHERE name=$1", [id]);
@@ -46,7 +50,7 @@ router.post("/:id", async (req, res) => {
 
 router.post("/post", async (req, res) => {
   const { id, name, age } = req.body;
-
+  console.log(id, name, age);
   try {
     const { rows, err } = await db.query(
       "INSERT INTO  st(id,name,age)VALUES($1,$2,$3) RETURNING *",
