@@ -1,8 +1,10 @@
 const express = require("express");
 const db = require("./database/db");
+const multer = require("multer");
+const path = require("path");
 const router = express.Router();
 router.use(express.json());
-
+router.use(express.urlencoded({ extended: true }));
 router.get("/", async (req, res) => {
   try {
     const { rows } = await db.query("SELECT * FROM st");
@@ -11,6 +13,20 @@ router.get("/", async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 });
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, "./uploads"); // Use relative path, not absolute
+  },
+  filename: function (req, file, cb) {
+    cb(null, Date.now() + "-" + file.originalname);
+  },
+});
+const upload = multer({ storage });
+
+router.post("/fileupload", upload.single("file"), (req, res) => {
+  res.send(req.body);
+});
+
 router.post("/:id", async (req, res) => {
   try {
     const { id } = req.params;
