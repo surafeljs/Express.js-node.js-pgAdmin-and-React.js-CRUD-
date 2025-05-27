@@ -33,28 +33,23 @@ function App() {
 
   return (
     <div className="App">
-      {/* <section>
-        <Form className="flex flex-col justify-center items-center min-h-screen bg-gray-500">
-          <FormLabel>
-            <FormControl
-              type="file"
-              encType="multipart/form-data"
-              name="file"
-              onChange={(e) => setFiles(e.target.files[0])}
-            />
-          </FormLabel>
-         
+      <section className=" bg-[#626F47] flex justify-center items-center h-screen text-[#FFFDF6]">
+        <Form onSubmit={handler}>
+          <FormControl
+            // value={file}
+            type="file"
+            name="file"
+            onChange={(e) => setFiles(e.target.files[0])}
+          />
+          <Button
+            className=" mt-3  w-full"
+            variant="outline-dark"
+            type="submit"
+          >
+            Upload
+          </Button>
         </Form>
-      </section> */}
-      <form onSubmit={handler}>
-        <input
-          // value={file}
-          type="file"
-          name="file"
-          onChange={(e) => setFiles(e.target.files[0])}
-        />
-        <button type="submit">Upload</button>
-      </form>
+      </section>
     </div>
   );
 }
