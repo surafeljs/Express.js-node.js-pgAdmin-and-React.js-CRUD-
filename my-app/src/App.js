@@ -31,22 +31,6 @@ function App() {
     }
   };
 
-  const handlers = async (e) => {
-    e.preventDefault();
-
-    await axios
-      .post("http://localhost:9000/post", {
-        id: id,
-        name: name,
-        age: age,
-      })
-      .then((res) => {
-        console.log(res.data);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  };
   return (
     <div className="App">
       {/* <section>
@@ -68,27 +52,6 @@ function App() {
           type="file"
           name="file"
           onChange={(e) => setFiles(e.target.files[0])}
-        />
-        <button type="submit">Upload</button>
-      </form>
-
-      <form onSubmit={handlers}>
-        <input
-          type="text"
-          name="file"
-          onChange={(e) => setFiD(e.target.value)}
-        />
-
-        <input
-          type="text"
-          name="file"
-          onChange={(e) => setName(e.target.value)}
-        />
-
-        <input
-          type="text"
-          name="file"
-          onChange={(e) => setAge(e.target.value)}
         />
         <button type="submit">Upload</button>
       </form>
