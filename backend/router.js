@@ -27,7 +27,26 @@ const storage = multer.diskStorage({
 });
 const upload = multer({ storage: storage });
 
-router.post("/fileupload", upload.single("file"), (req, res) => {});
+router.post("/fileupload", upload.single("file"), async (req, res) => {
+  try {
+    const { originalname, filename, mimetype, size } = req.file;
+    const id = Math.floor(Math.random() * 1000) + 1;
+    const { rows } = await db.query(
+      "INSERT INTO student VALUES($1,$2,$3,$4,$5) RETURNING * ",
+      [id, originalname, filename, mimetype, size]
+    );
+    res.status(201).json({
+      message: "File uploaded successfully",
+      file: rows[0],
+    });
+  } catch (error) {
+    console.error("Upload error:", error);
+    res.status(500).json({
+      message: "File upload failed",
+      error: error.message,
+    });
+  }
+});
 
 router.post("post/:id", async (req, res) => {
   try {
