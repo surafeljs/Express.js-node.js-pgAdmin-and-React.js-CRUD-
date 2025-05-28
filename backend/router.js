@@ -25,15 +25,25 @@ const storage = multer.diskStorage({
     cb(null, Date.now() + "-" + file.originalname);
   },
 });
-const upload = multer({ storage: storage });
+const fileFilter = (req, file, cb) => {
+  if (file.mimetype === "image/jpeg" || file.mimetype === "image/jpg") {
+    cb(null, true);
+  } else {
+    cb(new Error("Only .jpg files are allowed!"), false);
+  }
+};
+
+const upload = multer({ storage: storage, fileFilter });
 
 router.post("/fileupload", upload.single("file"), async (req, res) => {
   try {
+    const { name, age } = req.body;
     const { originalname, filename, mimetype, size } = req.file;
+
     const id = Math.floor(Math.random() * 1000) + 1;
     const { rows } = await db.query(
-      "INSERT INTO student VALUES($1,$2,$3,$4,$5) RETURNING * ",
-      [id, originalname, filename, mimetype, size]
+      "INSERT INTO student(id, name, age, originalname, filename, mimetype, size) VALUES($1,$2,$3,$4,$5,$6,$7) RETURNING * ",
+      [id, name, age, originalname, filename, mimetype, size]
     );
     res.status(201).json({
       message: "File uploaded successfully",
